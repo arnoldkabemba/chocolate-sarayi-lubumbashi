@@ -1,0 +1,698 @@
+/* ==========================================================================
+   Chocolate Sarayı — Chocolate Sweets & Coffee House, Lubumbashi
+   ==========================================================================
+   Parti pris : la retenue. Peu de blocs, beaucoup d'air, une seule couleur
+   d'accent, la photographie au premier plan. Les ornements sont rares et
+   dessinés (sceau, filet à losange), jamais décoratifs par défaut.
+   ========================================================================== */
+
+/* --- 1. Reset ------------------------------------------------------------ */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;overflow-x:clip}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+body,h1,h2,h3,h4,p,figure,blockquote,dl,dd,ul,ol{margin:0}
+ul[class],ol[class]{list-style:none;padding:0}
+/* height:auto est indispensable : sans lui l'attribut height du HTML impose
+   sa hauteur et tous les aspect-ratio plus bas sont ignorés. */
+img,picture,svg{max-width:100%;height:auto;display:block}
+input,button,textarea,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+a{text-decoration:none;color:inherit}
+table{border-collapse:collapse;width:100%}
+
+/* --- 2. Jetons ----------------------------------------------------------- */
+:root{
+  --papier:#F5F0E6;
+  --papier-fonce:#EBE2D3;
+  --encre:#231710;
+  --encre-douce:#6A584A;
+  --encre-pale:#766451;        /* 4,95:1 sur le papier — AA */
+  --cacao:#1C120B;
+  --caramel:#B9702A;
+  --caramel-texte:#96561A;     /* 5,05:1 sur le papier — AA pour le petit texte */
+  --caramel-clair:#D99A55;
+  --filet:rgba(35,23,16,.16);
+  --filet-clair:rgba(245,240,230,.2);
+
+  --display:"Instrument Serif",ui-serif,Georgia,serif;
+  --texte:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  --marge:clamp(1.25rem,6vw,6rem);
+  --max:1340px;
+  --air:clamp(5rem,12vw,11rem);
+  --h-entete:72px;
+
+  --t:600ms cubic-bezier(.19,1,.22,1);
+}
+
+/* --- 3. Base ------------------------------------------------------------- */
+body{
+  font-family:var(--texte);
+  font-size:clamp(1rem,.96rem + .2vw,1.0625rem);
+  line-height:1.65;
+  color:var(--encre);
+  background:var(--papier);
+  overflow-x:clip;
+}
+body.nav-ouverte{overflow:hidden}
+
+/* Grain de papier : voile fixe, très léger. C'est ce qui enlève
+   l'aspect « aplat numérique » des fonds unis. */
+body::after{
+  content:"";position:fixed;inset:0;z-index:300;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+h1,h2,h3{
+  font-family:var(--display);font-weight:400;
+  line-height:1.02;letter-spacing:-.015em;color:var(--encre);
+  text-wrap:balance;
+}
+h1{font-size:clamp(3rem,1.4rem + 6.6vw,8.5rem)}
+h2{font-size:clamp(2.2rem,1.3rem + 3.6vw,4.6rem)}
+h3{font-size:clamp(1.35rem,1.15rem + .85vw,1.9rem)}
+em,.italique{font-style:italic}
+
+::selection{background:var(--caramel);color:var(--papier)}
+:focus-visible{outline:1.5px solid var(--caramel);outline-offset:4px}
+
+/* --- 4. Mise en page ----------------------------------------------------- */
+.enveloppe{width:100%;max-width:var(--max);margin-inline:auto;padding-inline:var(--marge)}
+.bloc{padding-block:var(--air)}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Grille éditoriale de 12 colonnes, pour des décalages voulus */
+.grille{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(1.25rem,3vw,2.5rem)}
+.c1-5{grid-column:1/6}   .c1-6{grid-column:1/7}   .c1-7{grid-column:1/8}
+.c2-7{grid-column:2/8}   .c3-11{grid-column:3/11} .c6-13{grid-column:6/13}
+.c7-13{grid-column:7/13} .c8-13{grid-column:8/13} .c1-9{grid-column:1/10}
+@media (max-width:900px){
+  .grille{grid-template-columns:1fr;gap:2rem}
+  .c1-5,.c1-6,.c1-7,.c1-9,.c2-7,.c3-11,.c6-13,.c7-13,.c8-13{grid-column:1/-1}
+}
+
+.capitale{
+  font-size:.6875rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--caramel-texte);display:block;
+}
+.clair .capitale{color:var(--caramel-clair)}
+
+.chapeau{font-size:clamp(1.0625rem,1rem + .35vw,1.25rem);line-height:1.6;color:var(--encre-douce);max-width:52ch}
+.clair .chapeau{color:rgba(245,240,230,.74)}
+
+.clair{color:var(--papier)}
+.clair h1,.clair h2,.clair h3{color:var(--papier)}
+
+/* Filet orné d'un losange, à la place des traits décoratifs habituels */
+.filet{display:flex;align-items:center;gap:.9rem;color:var(--filet)}
+.filet::before,.filet::after{content:"";height:1px;background:currentColor;flex:1}
+.filet i{width:5px;height:5px;background:var(--caramel);transform:rotate(45deg);flex:none}
+
+/* --- 5. Liens et boutons ------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-size:.8125rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  padding-bottom:.45rem;border-bottom:1px solid var(--encre);
+  transition:gap var(--t),color var(--t),border-color var(--t);
+}
+.btn:hover{gap:1.1rem;color:var(--caramel);border-color:var(--caramel)}
+.btn svg{width:1.05em;height:1.05em;flex:none;transition:transform var(--t)}
+.btn:hover svg{transform:translateX(3px)}
+.clair .btn{border-color:var(--filet-clair)}
+.clair .btn:hover{color:var(--caramel-clair);border-color:var(--caramel-clair)}
+
+.btn--plein{
+  border:1px solid var(--encre);padding:.95rem 1.8rem;
+  background:var(--encre);color:var(--papier);
+}
+.btn--plein:hover{background:var(--caramel);border-color:var(--caramel);color:var(--papier);gap:.9rem}
+.clair .btn--plein{background:var(--papier);color:var(--encre);border-color:var(--papier)}
+.clair .btn--plein:hover{background:var(--caramel);border-color:var(--caramel);color:var(--papier)}
+
+/* --- 6. Sceau ------------------------------------------------------------ */
+/* Un tampon, comme sur un papier de boutique. */
+.sceau{
+  width:clamp(88px,9vw,116px);aspect-ratio:1;flex:none;
+  border:1px solid currentColor;border-radius:50%;
+  display:grid;place-items:center;text-align:center;
+  color:var(--caramel);padding:.5rem;transform:rotate(-7deg);
+}
+.sceau span{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;line-height:1.6;font-weight:600;display:block}
+.sceau b{display:block;font-family:var(--display);font-size:1.45rem;font-weight:400;letter-spacing:0;text-transform:none;margin:.15rem 0}
+
+/* --- 7. En-tête ---------------------------------------------------------- */
+.entete{
+  position:fixed;top:0;left:0;right:0;z-index:70;
+  transition:background var(--t),border-color var(--t);
+  border-bottom:1px solid transparent;
+}
+.entete__in{display:flex;align-items:center;justify-content:space-between;gap:2rem;min-height:var(--h-entete)}
+.entete--posee{background:rgba(245,240,230,.94);border-bottom-color:var(--filet)}
+@supports (backdrop-filter:blur(1px)){
+  /* Le flou est porté par ::before : posé sur .entete, backdrop-filter
+     créerait un bloc conteneur et enfermerait le menu mobile dans la barre. */
+  .entete--posee{background:transparent}
+  .entete--posee::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:rgba(245,240,230,.9);backdrop-filter:blur(14px) saturate(1.2);
+  }
+}
+
+.marque{display:flex;align-items:center;gap:.7rem;color:var(--papier);transition:color var(--t)}
+.entete--posee .marque{color:var(--encre)}
+.marque__mark{width:30px;height:30px;flex:none}
+.marque__nom{font-family:var(--display);font-size:1.3rem;line-height:1;white-space:nowrap}
+.marque__sous{
+  display:block;font-size:.4375rem;letter-spacing:.26em;text-transform:uppercase;
+  margin-top:.3rem;opacity:.72;font-family:var(--texte);font-weight:600;
+}
+
+.nav{display:flex;align-items:center;gap:2.1rem}
+.nav a{
+  font-size:.8125rem;font-weight:600;letter-spacing:.06em;color:var(--papier);
+  position:relative;padding-block:.3rem;transition:color var(--t),opacity var(--t);opacity:.85;
+}
+.entete--posee .nav a{color:var(--encre)}
+.nav a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--caramel);transition:width var(--t)}
+.nav a:hover{opacity:1}
+.nav a:hover::after,.nav a[aria-current="page"]::after{width:100%}
+.nav a[aria-current="page"]{color:var(--caramel-clair)}
+.entete--posee .nav a[aria-current="page"]{color:var(--caramel)}
+
+.burger{display:none;width:40px;height:40px;align-items:center;justify-content:center;margin-right:-8px;z-index:80}
+.burger span{display:block;width:20px;height:1.5px;background:var(--papier);position:relative;transition:background 200ms}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:20px;height:1.5px;background:var(--papier);transition:transform var(--t),top var(--t)}
+.burger span::before{top:-6px}
+.burger span::after{top:6px}
+.entete--posee .burger span,
+.entete--posee .burger span::before,
+.entete--posee .burger span::after{background:var(--encre)}
+.nav-ouverte .burger span{background:transparent!important}
+.nav-ouverte .burger span::before{top:0;transform:rotate(45deg);background:var(--papier)!important}
+.nav-ouverte .burger span::after{top:0;transform:rotate(-45deg);background:var(--papier)!important}
+.voile{display:none}
+.nav__pied{display:none}
+
+@media (max-width:980px){
+  .burger{display:flex}
+  .nav{
+    position:fixed;inset:0;background:var(--cacao);
+    flex-direction:column;align-items:flex-start;justify-content:center;
+    gap:0;padding:2rem var(--marge);
+    clip-path:inset(0 0 100% 0);transition:clip-path 700ms cubic-bezier(.19,1,.22,1);
+    z-index:75;
+  }
+  .nav-ouverte .nav{clip-path:inset(0 0 0 0)}
+  /* .entete--posee .nav a impose l'encre foncée : il faut une règle au
+     moins aussi spécifique pour revenir au crème sur le panneau cacao. */
+  .nav a,
+  .entete--posee .nav a{
+    font-family:var(--display);font-size:clamp(2rem,9vw,3rem);letter-spacing:-.01em;
+    padding-block:.4rem;color:var(--papier);opacity:1;
+  }
+  .nav a[aria-current="page"],
+  .entete--posee .nav a[aria-current="page"]{color:var(--caramel-clair)}
+  .nav a::after{display:none}
+  .nav a[aria-current="page"]{color:var(--caramel-clair)}
+  .nav__pied{display:block;margin-top:2.5rem;font-size:.8125rem;color:rgba(245,240,230,.6);line-height:1.9}
+  .entete .nav__pied a,
+  .entete--posee .nav__pied a{font-family:var(--texte);font-size:.8125rem;display:inline;color:inherit;letter-spacing:0}
+}
+
+/* --- 8. Ouverture (héros plein écran) ------------------------------------ */
+.ouverture{
+  position:relative;min-height:100svh;display:flex;align-items:flex-end;
+  color:var(--papier);isolation:isolate;overflow:hidden;
+}
+.ouverture__fond{position:absolute;inset:0;z-index:-2}
+.ouverture__fond img{width:100%;height:100%;object-fit:cover;object-position:center 34%}
+/* Deux voiles : un fond de page pour l'ensemble, et un voile latéral
+   gauche derrière le texte. Sans lui, le titre tombait sur les baies
+   vitrées — la zone la plus claire de la photo — et devenait illisible. */
+.ouverture::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(100deg,rgba(24,15,9,.93) 0%,rgba(24,15,9,.84) 40%,rgba(24,15,9,.42) 70%,rgba(24,15,9,.14) 100%),
+    linear-gradient(to top,rgba(24,15,9,.9) 0%,rgba(24,15,9,.4) 48%,rgba(24,15,9,.22) 74%,rgba(24,15,9,.55) 100%);
+}
+@media (max-width:760px){
+  .ouverture::before{
+    background:linear-gradient(to top,rgba(24,15,9,.95) 0%,rgba(24,15,9,.8) 42%,rgba(24,15,9,.7) 100%);
+  }
+}
+.ouverture__in{width:100%;padding-block:clamp(2.5rem,7vw,5rem)}
+.ouverture h1{margin:.7rem 0 0;letter-spacing:-.028em}
+.ouverture h1 em{color:var(--caramel-clair)}
+.ouverture__sous{
+  font-size:.6875rem;letter-spacing:.34em;text-transform:uppercase;
+  color:rgba(245,240,230,.78);font-weight:600;margin-top:1.1rem;
+}
+.ouverture__ligne{
+  margin-top:1.5rem;font-size:clamp(1rem,.95rem + .35vw,1.2rem);
+  color:rgba(245,240,230,.82);max-width:34ch;
+}
+.ouverture__bas{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;
+  margin-top:clamp(2rem,5vw,3.5rem);flex-wrap:wrap;
+}
+.ouverture .sceau{color:var(--caramel-clair)}
+
+.defilement{
+  display:inline-flex;align-items:center;gap:.7rem;
+  font-size:.625rem;letter-spacing:.26em;text-transform:uppercase;
+  color:rgba(245,240,230,.6);font-weight:600;
+}
+.defilement i{display:block;width:34px;height:1px;background:rgba(245,240,230,.3);position:relative;overflow:hidden}
+.defilement i::after{content:"";position:absolute;inset:0;background:var(--caramel-clair);animation:glisse 2.8s ease-in-out infinite}
+@keyframes glisse{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* --- 9. Titre de page ---------------------------------------------------- */
+.titre-page{padding-block:calc(var(--h-entete) + clamp(3.5rem,8vw,6rem)) clamp(2.5rem,6vw,4rem)}
+.titre-page h1{font-size:clamp(2.6rem,1.4rem + 5vw,6rem)}
+.titre-page .chapeau{margin-top:1.5rem}
+.fil{display:flex;gap:.6rem;font-size:.6875rem;letter-spacing:.2em;text-transform:uppercase;color:var(--encre-pale);margin-bottom:1.5rem;font-weight:600}
+.fil a:hover{color:var(--caramel-texte)}
+
+/* --- 10. Manifeste ------------------------------------------------------- */
+.manifeste p{font-size:clamp(1.15rem,1rem + .75vw,1.6rem);line-height:1.5;max-width:30ch}
+.manifeste p + p{margin-top:1.4rem}
+/* Lettrine : un détail de livre, pas de gabarit web */
+.lettrine::first-letter{
+  float:left;font-family:var(--display);font-size:4em;line-height:.76;
+  padding:.07em .11em 0 0;color:var(--caramel);
+}
+.signature{
+  font-family:var(--display);font-style:italic;font-size:1.7rem;
+  color:var(--caramel);margin-top:2.2rem;display:block;
+}
+
+/* --- 11. Photographies --------------------------------------------------- */
+figure{margin:0}
+.photo{overflow:hidden;background:var(--papier-fonce);position:relative}
+.photo img{width:100%;height:100%;object-fit:cover}
+.legende{
+  margin-top:.8rem;font-size:.8125rem;color:var(--encre-pale);
+  font-style:italic;font-family:var(--display);
+}
+.clair .legende{color:rgba(245,240,230,.55)}
+
+.bande-photo{position:relative;min-height:clamp(380px,62vh,720px);display:flex;align-items:flex-end;color:var(--papier);isolation:isolate;overflow:hidden}
+.bande-photo__fond{position:absolute;inset:0;z-index:-2}
+.bande-photo__fond img{width:100%;height:100%;object-fit:cover}
+.bande-photo::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(28,18,11,.84),rgba(28,18,11,.08) 62%)}
+.bande-photo__in{padding-block:clamp(2rem,5vw,3.5rem);width:100%}
+.bande-photo h2{max-width:17ch}
+
+/* En colonne unique, une photo pleine largeur dépasserait l'écran :
+   on la plafonne, object-fit recadre. */
+@media (max-width:900px){
+  .photo{max-height:min(72vh,600px)}
+}
+
+/* --- 12. La carte, composée comme un menu imprimé ------------------------ */
+.menu-nav{position:sticky;top:var(--h-entete);z-index:50;background:rgba(245,240,230,.95);border-bottom:1px solid var(--filet)}
+@supports (backdrop-filter:blur(1px)){.menu-nav{background:rgba(245,240,230,.86);backdrop-filter:blur(12px)}}
+.menu-nav ul{display:flex;gap:1.75rem;overflow-x:auto;padding-block:.9rem;scrollbar-width:none}
+.menu-nav ul::-webkit-scrollbar{display:none}
+.menu-nav a{
+  display:block;white-space:nowrap;font-size:.6875rem;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--encre-pale);padding-block:.2rem;
+  border-bottom:1px solid transparent;transition:color var(--t),border-color var(--t);
+}
+.menu-nav a:hover{color:var(--encre)}
+.menu-nav a.actif{color:var(--encre);border-bottom-color:var(--caramel-texte)}
+
+.service{padding-block:clamp(2.5rem,5vw,4rem);scroll-margin-top:calc(var(--h-entete) + 60px)}
+.service + .service{border-top:1px solid var(--filet)}
+.service__tete{margin-bottom:clamp(1.75rem,3vw,2.5rem)}
+.service__tete h2{font-size:clamp(1.9rem,1.3rem + 2vw,3rem)}
+.service__note{font-family:var(--display);font-style:italic;color:var(--encre-pale);font-size:1.0625rem;margin-top:.25rem}
+
+/* Deux colonnes de mets, conduite pointillée — comme une carte papier */
+.mets{columns:2;column-gap:clamp(2.5rem,5vw,5rem);column-rule:1px solid var(--filet)}
+.met{break-inside:avoid;padding-block:.85rem;display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;column-gap:.6rem}
+.met__nom{font-weight:600;font-size:1rem;letter-spacing:-.005em}
+.met__pt{border-bottom:1px dotted rgba(35,23,16,.3);transform:translateY(-.28em)}
+.met__px{font-family:var(--display);font-size:1.0625rem;color:var(--caramel-texte);font-variant-numeric:tabular-nums;white-space:nowrap}
+.met__desc{grid-column:1/-1;font-size:.875rem;color:var(--encre-douce);line-height:1.5;margin-top:.2rem;max-width:46ch}
+.met__marque{
+  font-size:.5625rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--caramel-texte);border:1px solid rgba(185,112,42,.38);padding:.1rem .4rem;margin-left:.45rem;
+  white-space:nowrap;
+}
+@media (max-width:820px){.mets{columns:1;column-rule:none}}
+
+.mention{font-size:.8125rem;color:var(--encre-pale);line-height:1.75;max-width:70ch}
+.mention a{color:var(--caramel-texte);border-bottom:1px solid currentColor}
+
+/* --- 13. Pratique -------------------------------------------------------- */
+.pratique dl{display:grid;gap:1.5rem;margin:0}
+.pratique dt{font-size:.625rem;letter-spacing:.24em;text-transform:uppercase;color:var(--encre-pale);font-weight:600;margin-bottom:.35rem}
+.clair .pratique dt{color:rgba(245,240,230,.68)}
+.pratique dd{margin:0;font-size:1.0625rem;line-height:1.55}
+.pratique dd a:hover{color:var(--caramel-texte)}
+.clair .pratique dd a:hover{color:var(--caramel-clair)}
+
+.horaires{margin-top:.5rem}
+.horaires tr{border-bottom:1px solid var(--filet)}
+.clair .horaires tr{border-color:var(--filet-clair)}
+.horaires th,.horaires td{padding:.62rem 0;text-align:left;font-weight:400;font-size:.9375rem}
+.horaires th{color:var(--encre-douce)}
+.clair .horaires th{color:rgba(245,240,230,.7)}
+.horaires td{text-align:right;font-variant-numeric:tabular-nums}
+.horaires tr.aujourdhui th,.horaires tr.aujourdhui td{color:var(--caramel-texte)}
+.clair .horaires tr.aujourdhui th,.clair .horaires tr.aujourdhui td{color:var(--caramel-clair)}
+.horaires tr.aujourdhui th::after{content:" · aujourd’hui";font-size:.75rem;opacity:.75}
+
+.plan{overflow:hidden;border:1px solid var(--filet);height:clamp(260px,40vh,420px)}
+.clair .plan{border-color:var(--filet-clair)}
+.plan iframe{width:100%;height:100%;border:0;display:block;filter:grayscale(.35) sepia(.12) contrast(1.04)}
+
+/* --- 14. Galerie --------------------------------------------------------- */
+.planche{columns:3 280px;column-gap:clamp(.75rem,1.6vw,1.25rem)}
+.planche figure{break-inside:avoid;margin-bottom:clamp(.75rem,1.6vw,1.25rem);cursor:zoom-in;overflow:hidden;background:var(--papier-fonce)}
+.planche img{width:100%;height:auto;max-height:76vh;object-fit:cover;transition:transform 900ms cubic-bezier(.19,1,.22,1)}
+.planche figure:hover img{transform:scale(1.03)}
+.planche figure[hidden]{display:none}
+@media (max-width:640px){.planche{columns:1}}
+
+.filtres{display:flex;flex-wrap:wrap;gap:1.6rem;margin-bottom:2.5rem}
+.filtres button{
+  font-size:.6875rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--encre-pale);padding-bottom:.3rem;border-bottom:1px solid transparent;
+  transition:color var(--t),border-color var(--t);
+}
+.filtres button:hover{color:var(--encre)}
+.filtres button[aria-pressed="true"]{color:var(--encre);border-bottom-color:var(--caramel)}
+
+.visionneuse{position:fixed;inset:0;z-index:200;background:rgba(18,11,7,.97);display:none;align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem)}
+.visionneuse.actif{display:flex}
+.visionneuse img{max-width:100%;max-height:84vh;object-fit:contain}
+.visionneuse button{position:absolute;color:var(--papier);opacity:.6;transition:opacity var(--t)}
+.visionneuse button:hover{opacity:1}
+.visionneuse__fermer{top:1.5rem;right:1.5rem}
+.visionneuse__prec{left:1.5rem;top:50%;transform:translateY(-50%)}
+.visionneuse__suiv{right:1.5rem;top:50%;transform:translateY(-50%)}
+.visionneuse__cpt{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(245,240,230,.5);font-size:.75rem;letter-spacing:.18em}
+
+/* --- 15. Formulaire ------------------------------------------------------ */
+.formulaire{display:grid;gap:1.7rem;max-width:34rem}
+.champ{display:grid;gap:.45rem}
+.champ--duo{display:grid;grid-template-columns:1fr 1fr;gap:1.7rem}
+.champ label{font-size:.625rem;letter-spacing:.22em;text-transform:uppercase;color:var(--encre-pale);font-weight:600}
+.champ input,.champ select,.champ textarea{
+  background:transparent;border:0;border-bottom:1px solid var(--filet);
+  padding:.55rem 0;font-size:1rem;width:100%;border-radius:0;
+  transition:border-color var(--t);
+}
+.champ input:focus,.champ select:focus,.champ textarea:focus{outline:none;border-bottom-color:var(--caramel)}
+.champ textarea{resize:vertical;min-height:88px}
+.champ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' fill='none' stroke='%239D8B7B' stroke-width='1.4'%3E%3Cpath d='M1 1 5.5 5.5 10 1'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .2rem center}
+.formulaire__msg{font-size:.9375rem;color:var(--caramel-texte);display:none}
+.formulaire__msg.actif{display:block}
+@media (max-width:560px){.champ--duo{grid-template-columns:1fr}}
+
+/* --- 16. Questions ------------------------------------------------------- */
+.questions details{border-top:1px solid var(--filet)}
+.questions details:last-of-type{border-bottom:1px solid var(--filet)}
+.questions summary{
+  padding:1.3rem 2.5rem 1.3rem 0;cursor:pointer;list-style:none;position:relative;
+  font-family:var(--display);font-size:1.3rem;
+}
+.questions summary::-webkit-details-marker{display:none}
+.questions summary::after{
+  content:"";position:absolute;right:.4rem;top:50%;width:9px;height:9px;margin-top:-6px;
+  border-right:1px solid var(--caramel);border-bottom:1px solid var(--caramel);
+  transform:rotate(45deg);transition:transform var(--t);
+}
+.questions details[open] summary::after{transform:rotate(-135deg);margin-top:-2px}
+.questions details p{padding-bottom:1.4rem;color:var(--encre-douce);max-width:62ch}
+
+/* --- 17. Pied ------------------------------------------------------------ */
+.pied{background:var(--cacao);color:rgba(245,240,230,.62);padding-top:clamp(3.5rem,7vw,5.5rem)}
+.pied a:hover{color:var(--caramel-clair)}
+.pied .marque{color:var(--papier)}
+.pied__mot{font-family:var(--display);font-size:clamp(1.5rem,1.2rem + 1.4vw,2.4rem);color:var(--papier);max-width:18ch;line-height:1.15;margin-top:1.5rem}
+/* Titres du pied : balise h2 pour ne pas sauter de niveau, allure de surtitre */
+.pied__h{font-family:var(--texte);font-size:.625rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(245,240,230,.58);font-weight:600;margin-bottom:1.1rem;line-height:1.4}
+.pied ul{display:grid;gap:.7rem;font-size:.9375rem}
+.pied__horaires li{display:flex;justify-content:space-between;gap:1rem;font-variant-numeric:tabular-nums;font-size:.875rem}
+.pied__bas{
+  border-top:1px solid var(--filet-clair);margin-top:clamp(2.5rem,5vw,4rem);
+  padding-block:1.5rem;display:flex;justify-content:space-between;gap:1.25rem;flex-wrap:wrap;font-size:.75rem;
+}
+.reseaux{display:flex;gap:1.3rem;margin-top:1.6rem;flex-wrap:wrap}
+.reseaux a{font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;padding-bottom:.25rem;border-bottom:1px solid var(--filet-clair)}
+
+/* --- 18. Apparitions ----------------------------------------------------- */
+.monte{opacity:0;transform:translateY(26px);transition:opacity 1100ms cubic-bezier(.19,1,.22,1),transform 1100ms cubic-bezier(.19,1,.22,1)}
+.monte.vu{opacity:1;transform:none}
+.monte[data-d="1"]{transition-delay:120ms}
+.monte[data-d="2"]{transition-delay:240ms}
+.monte[data-d="3"]{transition-delay:360ms}
+
+/* L'image se découvre par un masque : elle n'apparaît pas en fondu. */
+.devoile{clip-path:inset(0 0 100% 0);transition:clip-path 1300ms cubic-bezier(.19,1,.22,1)}
+.devoile.vu{clip-path:inset(0 0 0 0)}
+.devoile img{transform:scale(1.14);transition:transform 1700ms cubic-bezier(.19,1,.22,1)}
+.devoile.vu img{transform:scale(1)}
+
+.suite > *{opacity:0;transform:translateY(18px);transition:opacity 900ms cubic-bezier(.19,1,.22,1),transform 900ms cubic-bezier(.19,1,.22,1)}
+.suite.vu > *{opacity:1;transform:none}
+.suite.vu > *:nth-child(2){transition-delay:90ms}
+.suite.vu > *:nth-child(3){transition-delay:180ms}
+.suite.vu > *:nth-child(4){transition-delay:270ms}
+.suite.vu > *:nth-child(n+5){transition-delay:340ms}
+
+@media (prefers-reduced-motion:reduce){
+  .monte,.suite > *{opacity:1;transform:none}
+  .devoile{clip-path:none}
+  .devoile img,.devoile.vu img{transform:none}
+  .defilement i::after{animation:none}
+}
+
+/* --- 19. Impression ------------------------------------------------------ */
+@media print{
+  .entete,.pied,.menu-nav,.voile,.defilement{display:none!important}
+  body::after{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  .monte,.suite > *{opacity:1!important;transform:none!important}
+  .devoile{clip-path:none!important}
+  .service{page-break-inside:avoid}
+  .mets{columns:2}
+}
+
+/* ==========================================================================
+   20. Blocs commerciaux
+   Ajoutés après coup : la première version du site était belle mais ne
+   vendait rien. Chaque bloc ci-dessous a un travail précis à faire.
+   ========================================================================== */
+
+/* --- Héros : actions et barre d'informations ----------------------------- */
+.ouverture__actions{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:clamp(1.75rem,4vw,2.5rem)}
+
+.btn--contour{
+  border:1px solid currentColor;padding:.95rem 1.8rem;
+  border-bottom-width:1px;
+}
+.btn--contour:hover{background:var(--papier);color:var(--encre);border-color:var(--papier);gap:.9rem}
+.clair .btn--contour{border-color:rgba(245,240,230,.55)}
+.clair .btn--contour:hover{background:var(--papier);color:var(--encre);border-color:var(--papier)}
+
+/* Les trois informations qu'un client cherche avant de se déplacer */
+.reperes{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.4rem;
+  margin-top:clamp(1.75rem,4vw,2.5rem);padding-top:1.4rem;
+  border-top:1px solid rgba(245,240,230,.2);
+  font-size:.8125rem;color:rgba(245,240,230,.8);
+}
+.reperes b{font-weight:600;color:var(--papier)}
+.reperes__sep{opacity:.35}
+.reperes__point{
+  width:6px;height:6px;border-radius:50%;background:#7FB069;flex:none;
+  margin-right:.1rem;box-shadow:0 0 0 3px rgba(127,176,105,.22);
+}
+.reperes__etoiles{display:inline-flex;gap:.1rem;color:var(--caramel-clair);vertical-align:-.15em}
+.reperes__etoiles svg{width:13px;height:13px}
+@media (max-width:620px){.reperes__sep{display:none}.reperes{gap:.5rem 1rem;flex-direction:column;align-items:flex-start}}
+
+/* --- Les incontournables : produit, photo, prix -------------------------- */
+/* Volontairement sans cadre ni ombre : une liste de boutique, pas des
+   cartes de gabarit. La photo porte, le prix est lisible tout de suite. */
+.produits{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(1rem,2.2vw,1.75rem)}
+.produit{display:block}
+.produit__photo{overflow:hidden;background:var(--papier-fonce);aspect-ratio:4/5}
+.produit__photo img{width:100%;height:100%;object-fit:cover;transition:transform 900ms cubic-bezier(.19,1,.22,1)}
+.produit:hover .produit__photo img{transform:scale(1.04)}
+.produit__ligne{
+  display:flex;align-items:baseline;gap:.6rem;margin-top:1rem;
+  border-bottom:1px solid var(--filet);padding-bottom:.5rem;
+}
+.produit__nom{font-weight:600;font-size:1rem;flex:1;min-width:0}
+.produit__px{font-family:var(--display);font-size:1.0625rem;color:var(--caramel-texte);font-variant-numeric:tabular-nums;white-space:nowrap}
+.produit__desc{font-size:.875rem;color:var(--encre-douce);line-height:1.5;margin-top:.5rem}
+@media (max-width:980px){.produits{grid-template-columns:repeat(2,1fr)}}
+/* Sur téléphone, une colonne unique faisait 2 400 px pour quatre produits :
+   deux écrans et demi à faire défiler avant la suite. On garde deux
+   colonnes et on resserre le texte. */
+@media (max-width:480px){
+  .produits{gap:1.1rem .9rem}
+  .produit__ligne{flex-wrap:wrap;gap:.15rem;margin-top:.7rem;padding-bottom:.45rem}
+  .produit__nom{flex:1 0 100%;font-size:.9375rem}
+  .produit__px{font-size:1rem}
+  .produit__desc{font-size:.8125rem;margin-top:.4rem;line-height:1.45}
+}
+
+/* --- Bloc en deux colonnes, photo et argument ---------------------------- */
+.argument{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center}
+.argument--inverse .argument__texte{order:-1}
+.argument__photo{overflow:hidden;background:var(--papier-fonce)}
+.argument__photo img{width:100%;height:100%;object-fit:cover}
+.argument__liste{margin-top:1.75rem;display:grid;gap:.1rem}
+.argument__liste li{
+  display:flex;align-items:baseline;gap:.75rem;padding-block:.65rem;
+  border-bottom:1px solid var(--filet);font-size:.9375rem;
+}
+.clair .argument__liste li{border-color:var(--filet-clair)}
+.argument__liste b{margin-left:auto;font-family:var(--display);font-size:1.0625rem;color:var(--caramel-texte);font-variant-numeric:tabular-nums;white-space:nowrap}
+.clair .argument__liste b{color:var(--caramel-clair)}
+@media (max-width:900px){
+  .argument{grid-template-columns:1fr}
+  .argument--inverse .argument__texte{order:0}
+  .argument__photo{max-height:min(60vh,460px)}
+}
+
+/* --- Avis : sobres, en ligne, pas en cartes ------------------------------ */
+.note-globale{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.note-globale strong{font-family:var(--display);font-size:clamp(3rem,2rem + 3vw,4.6rem);line-height:1;color:var(--encre)}
+.note-globale__etoiles{display:inline-flex;gap:.15rem;color:var(--caramel)}
+.note-globale__etoiles svg{width:17px;height:17px}
+.note-globale span{font-size:.9375rem;color:var(--encre-pale)}
+
+.temoignages{display:grid;gap:0;margin-top:2.5rem}
+.temoignages li{padding-block:1.4rem;border-top:1px solid var(--filet)}
+.temoignages li:last-child{border-bottom:1px solid var(--filet)}
+.temoignages p{font-family:var(--display);font-size:clamp(1.15rem,1rem + .6vw,1.5rem);line-height:1.4}
+.temoignages cite{
+  display:block;margin-top:.5rem;font-style:normal;font-size:.75rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--encre-pale);font-weight:600;
+}
+
+/* --- Bande de photos en défilement horizontal ---------------------------- */
+.rouleau{display:flex;gap:clamp(.6rem,1.4vw,1rem);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:.5rem}
+.rouleau::-webkit-scrollbar{display:none}
+.rouleau a{flex:0 0 auto;width:clamp(200px,26vw,320px);scroll-snap-align:start;overflow:hidden;background:var(--papier-fonce)}
+.rouleau img{width:100%;height:clamp(240px,30vw,380px);object-fit:cover;transition:transform 900ms cubic-bezier(.19,1,.22,1)}
+.rouleau a:hover img{transform:scale(1.04)}
+
+/* ==========================================================================
+   21. Revue d'équipe — accessibilité et conversion
+   ========================================================================== */
+
+/* --- Cibles tactiles -----------------------------------------------------
+   Les liens soulignés ne font que ~30 px de haut. Sur un écran tactile, on
+   élargit la zone cliquable sans toucher à l'apparence. 44 px est la taille
+   recommandée par Apple et Google. */
+@media (pointer:coarse){
+  .btn,.filtres button,.menu-nav a,.reseaux a,.pied ul a,.fil a{position:relative}
+  .btn::after,.filtres button::after,.menu-nav a::after,
+  .reseaux a::after,.pied ul a::after,.fil a::after{
+    content:"";position:absolute;left:0;right:0;
+    top:50%;transform:translateY(-50%);height:44px;min-height:100%;
+  }
+  /* .menu-nav a a déjà un ::after décoratif : on l'exclut */
+  .menu-nav a::after{display:none}
+  .menu-nav a{padding-block:.7rem}
+  .filtres button{padding-block:.7rem}
+}
+
+/* --- Barre d'action fixe sur mobile --------------------------------------
+   Le levier de conversion le plus fort pour un commerce de quartier :
+   appeler, écrire ou s'y rendre, à portée de pouce, sur toutes les pages. */
+.barre-action{display:none}
+@media (max-width:860px){
+  .barre-action{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    position:fixed;left:0;right:0;bottom:0;z-index:95;
+    background:var(--cacao);border-top:1px solid rgba(245,240,230,.14);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .barre-action a{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;
+    padding:.7rem .4rem;min-height:58px;color:var(--papier);
+    font-size:.6875rem;font-weight:600;letter-spacing:.06em;
+    transition:background var(--t),color var(--t);
+  }
+  .barre-action a + a{border-left:1px solid rgba(245,240,230,.14)}
+  .barre-action a:hover,.barre-action a:focus-visible{background:var(--caramel)}
+  .barre-action svg{width:19px;height:19px;flex:none}
+  /* On libère la place en bas de page pour ne rien masquer */
+  body{padding-bottom:62px}
+  .pied__bas{padding-bottom:1.5rem}
+}
+
+/* --- Bouton d'impression de la carte ------------------------------------- */
+@media print{.barre-action{display:none!important}}
+
+@media (max-width:860px){
+  /* La barre fixe recouvrait la dernière ligne du héros */
+  .ouverture__in{padding-bottom:calc(clamp(2.5rem,7vw,5rem) + 62px)}
+  .defilement{display:none}
+}
+
+/* ==========================================================================
+   22. Accueil — index de la carte et mot d'intention
+   ========================================================================== */
+
+/* --- Index de la carte -----------------------------------------------------
+   Le héros promet « plus de cent douceurs ». Sans preuve, c'est une phrase.
+   Neuf entrées en colonnes suffisent à la montrer, et chacune ouvre sa
+   section : on reste dans l'esprit d'un menu imprimé, pas d'un catalogue de
+   cartes. Le prix affiché est le plus bas réellement pratiqué dans la
+   section — jamais un prix d'appel inventé. */
+.index-carte{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  column-gap:clamp(2rem,4vw,4.5rem);
+  border-top:1px solid var(--filet);
+}
+.index-carte a{
+  display:grid;grid-template-columns:1fr auto;align-items:baseline;
+  column-gap:1rem;padding-block:1.05rem;
+  border-bottom:1px solid var(--filet);
+  transition:color var(--t);
+}
+.index-carte__nom{
+  grid-row:1;grid-column:1;
+  font-family:var(--display);font-size:1.1875rem;line-height:1.2;
+}
+.index-carte__px{
+  grid-row:1;grid-column:2;
+  font-family:var(--display);font-size:.9375rem;color:var(--caramel-texte);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.index-carte__note{
+  grid-row:2;grid-column:1/-1;
+  margin-top:.25rem;font-size:.8125rem;line-height:1.45;color:var(--encre-pale);
+}
+.index-carte a:hover .index-carte__nom,
+.index-carte a:focus-visible .index-carte__nom{color:var(--caramel-texte)}
+
+@media (max-width:980px){.index-carte{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){
+  .index-carte{grid-template-columns:1fr;column-gap:0}
+  .index-carte__note{font-size:.78125rem}
+}
+
+/* --- Mot d'intention ------------------------------------------------------
+   Mesure courte et lettrine : la page a besoin d'un moment où l'on ralentit,
+   entre les prix et le plan d'accès. */
+.mot{max-width:46ch;margin-top:clamp(1.5rem,3vw,2.25rem)}
+.mot p{font-size:clamp(1.0625rem,1rem + .4vw,1.25rem);line-height:1.65;color:var(--encre-douce)}
+.mot em{font-style:italic;color:var(--encre)}
+
+/* Sur une mesure étroite, une lettrine de quatre cadratins mange la moitié
+   de la ligne et le pavé devient illisible. */
+@media (max-width:560px){
+  .mot .lettrine::first-letter{font-size:3.1em;padding-right:.09em}
+}
